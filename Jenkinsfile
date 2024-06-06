@@ -10,7 +10,7 @@ pipeline{
         AWS_ACCOUNT_ID="558711665895"
         AWS_DEFAULT_REGION="ap-south-1"
         IMAGE_REPO_NAME="my-ecr-repo"
-        IMAGE_TAG="v1"
+        IMAGE_TAG="$BUILD_NUMBER"
         REPOSITORY_URI = "558711665895.dkr.ecr.ap-south-1.amazonaws.com/my-ecr-repo"
 
         cluster = "netflixapp-cluster"
