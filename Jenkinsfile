@@ -88,7 +88,7 @@ pipeline{
 
         stage('Deploy to container'){
             steps{
-                sh 'docker run -d --name 2048 -p 3000:3000 redengabrinez/2048:latest'
+                sh 'docker run -d --name 2048 -p 3000:3000 ${IMAGE_REPO_NAME}:${IMAGE_TAG}'
             }
         }
 
