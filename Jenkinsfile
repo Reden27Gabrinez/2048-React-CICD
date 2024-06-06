@@ -72,11 +72,13 @@ pipeline{
         //     }
         //   }
         // }
-        stage("Docker Build"){
+        stage("Docker Build and Push"){
             steps{
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
                        dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                       sh """docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"""
+                       sh """docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"""
                     }
                 }
             }
@@ -86,17 +88,6 @@ pipeline{
                 sh "trivy image ${IMAGE_REPO_NAME}:${IMAGE_TAG} > trivy.txt"
             }
         }
-        // Uploading Docker images into AWS ECR
-        stage('Pushing to ECR') {
-         steps{  
-           script {
-             withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
-                sh """docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"""
-                sh """docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"""
-             }
-           }
-          }
-       }
          
     }
 }
