@@ -86,16 +86,22 @@ pipeline{
             }
         }
 
-        stage('Deploy to ECS') {
-          steps {
-            script{
-              withCredentials([usernamePassword(credentialsId: 'aws', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                      sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com'
-              }
-              sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+        stage('Deploy to container'){
+            steps{
+                sh 'docker run -d --name 2048 -p 3000:3000 redengabrinez/2048:latest'
             }
-          }
         }
+
+        // stage('Deploy to ECS') {
+        //   steps {
+        //     script{
+        //       withCredentials([usernamePassword(credentialsId: 'aws', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        //               sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com'
+        //       }
+        //       sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+        //     }
+        //   }
+        // }
          
     }
 }
