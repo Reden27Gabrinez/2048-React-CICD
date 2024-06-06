@@ -12,6 +12,9 @@ pipeline{
         IMAGE_REPO_NAME="my-ecr-repo"
         IMAGE_TAG="v1"
         REPOSITORY_URI = "558711665895.dkr.ecr.ap-south-1.amazonaws.com/my-ecr-repo"
+
+        cluster = "netflixapp-cluster"
+        service = "netflixapp-service"
     }
     stages {
         stage('clean workspace'){
@@ -77,23 +80,21 @@ pipeline{
               }
           }
         }
-
-
-        // stage("Docker Build and Push"){
-        //     steps{
-        //         script{
-        //            withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
-        //                dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-        //                sh """docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"""
-        //                sh """docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"""
-        //             }
-        //         }
-        //     }
-        // }
         stage("TRIVY"){
             steps{
                 sh "trivy image ${IMAGE_REPO_NAME}:${IMAGE_TAG} > trivy.txt"
             }
+        }
+
+        stage('Deploy to ECS') {
+          steps {
+            script{
+              withCredentials([usernamePassword(credentialsId: 'aws', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                      sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com'
+              }
+              sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+            }
+          }
         }
          
     }
