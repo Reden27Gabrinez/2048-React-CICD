@@ -83,7 +83,7 @@ pipeline{
         }
         stage("TRIVY"){
             steps{
-                sh "trivy image dockerImage > trivy.txt"
+                sh "trivy image ${IMAGE_REPO_NAME}:${IMAGE_TAG} > trivy.txt"
             }
         }
         // Uploading Docker images into AWS ECR
