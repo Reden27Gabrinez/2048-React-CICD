@@ -37,22 +37,22 @@ pipeline{
             }
         }
       
-        // stage("Sonarqube Analysis "){
-        //     steps{
-        //         withSonarQubeEnv('sonar-server') {
-        //             sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Game \
-        //             -Dsonar.projectKey=Game '''
-        //         }
-        //     }
-        // }
+        stage("Sonarqube Analysis "){
+            steps{
+                withSonarQubeEnv('sonar-server') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Game \
+                    -Dsonar.projectKey=Game '''
+                }
+            }
+        }
       
-        // stage("quality gate"){
-        //    steps {
-        //         script {
-        //             waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
-        //         }
-        //     }
-        // }
+        stage("quality gate"){
+           steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
+                }
+            }
+        }
       
         stage('Install Dependencies') {
             steps {
@@ -60,18 +60,18 @@ pipeline{
             }
         }
       
-        // stage('OWASP FS SCAN') {
-        //     steps {
-        //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-        //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-        //     }
-        // }
+        stage('OWASP FS SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
       
-        // stage('TRIVY FS SCAN') {
-        //     steps {
-        //         sh "trivy fs . > trivyfs.txt"
-        //     }
-        // }
+        stage('TRIVY FS SCAN') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
+            }
+        }
 
         stage("Docker Build and Push"){
           steps{
@@ -85,11 +85,11 @@ pipeline{
               }
           }
         }
-        // stage("TRIVY"){
-        //     steps{
-        //         sh "trivy image ${IMAGE_REPO_NAME}:${IMAGE_TAG} > trivy.txt"
-        //     }
-        // }
+        stage("TRIVY"){
+            steps{
+                sh "trivy image ${IMAGE_REPO_NAME}:${IMAGE_TAG} > trivy.txt"
+            }
+        }
 
         stage('Deploy to container'){
             steps{
