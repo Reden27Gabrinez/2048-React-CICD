@@ -64,7 +64,8 @@ export const App = () => {
           href="https://www.youtube.com/channel/UCJV16_5c4A0amyBZSI4yP6A"
           target="_blank"
         >
-          Matt Sokola
+{/*           Matt Sokola */}
+          Red
         </a>
       </div>
     </div>
