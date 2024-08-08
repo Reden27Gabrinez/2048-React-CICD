@@ -65,7 +65,7 @@ export const App = () => {
           target="_blank"
         >
 {/*           Matt Sokola */}
-          Red
+          Reden
         </a>
       </div>
     </div>
