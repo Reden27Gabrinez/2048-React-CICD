@@ -65,7 +65,7 @@ export const App = () => {
           target="_blank"
         >
 {/*           Matt Sokola */}
-          Reden Gabrinez
+          Reden Gabrinez test dev
         </a>
       </div>
     </div>
